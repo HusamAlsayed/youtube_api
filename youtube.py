@@ -1,4 +1,6 @@
 import requests
+import json
+from youtube_transcript_api import YouTubeTranscriptApi
 
 class Youtube:
   """
@@ -79,4 +81,38 @@ class Youtube:
       playlists_videos.append(small_data)
     
     return playlists_videos
+
+  @staticmethod
+  def get_video_transcript(video_url):
+    begin = 'https://www.youtube.com/watch?v='
+    l = len(begin)
+    if video_url.startswith(begin):
+       video_url = video_url[l:]
+    trans = YouTubeTranscriptApi.get_transcript(video_url, languages=['en'])
+    data = []
+    for item in trans:
+        x = json.dumps(item)
+        y = json.loads(x)
+        data.append(y)
+    return data
+
+
+
+  @staticmethod
+  def get_word_time_transcript(video_url):
+    data = Youtube.get_video_transcript(video_url)
+    newjson = {}
+    newjson['transcripts'] = []
+    newjson['transcripts'].append({'words': []})
+    for i in data:
+        text = i['text']
+        duration = i['duration']
+        words = text.split()
+        l = len(words)
+        for w in range(len(words)):
+            newtime = i['start'] + w * (duration / l)
+            newjson['transcripts'][0]['words'].append({'word': words[w], 'start_time ': newtime})
+    return newjson
+
+
   
