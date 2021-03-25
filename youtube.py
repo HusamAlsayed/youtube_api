@@ -103,7 +103,6 @@ class Youtube:
     data = Youtube.get_video_transcript(video_url)
     newjson = {}
     newjson['transcripts'] = []
-    newjson['transcripts'].append({'words': []})
     for i in data:
         text = i['text']
         duration = i['duration']
@@ -111,7 +110,7 @@ class Youtube:
         l = len(words)
         for w in range(len(words)):
             newtime = i['start'] + w * (duration / l)
-            newjson['transcripts'][0]['words'].append({'word': words[w], 'start_time ': newtime})
+            newjson['transcripts'].append({'word': words[w], 'start_time ': newtime})
     return newjson
 
 
