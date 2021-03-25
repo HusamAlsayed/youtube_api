@@ -1,21 +1,22 @@
 import requests
-import numpy as np
+
 class Youtube:
   """
     an implementation to the youtube api so that you can use channel and videos .. 
   """
-  def __init__(self,youtube_key):
+  def __init__(self,youtube_key,endpoint):
     """
       you have to specify the api token 
     """
     self.youtube_key = youtube_key
+    self.endpoint = endpoint
 
   def get_channel_playlists(self,part,channel_id,page_token):
 
     """
       get a channel playlist here you take only one part if the number of channels bigger than the whole number of channel allowed .
     """
-    url = 'https://youtube.googleapis.com/youtube/v3/playlists?part={}&channelId={}&key={}&pageToken={}'
+    url = self.endpoint + 'playlists?part={}&channelId={}&key={}&pageToken={}'
     url = url.format(part,channel_id,self.youtube_key,page_token)
     data = requests.get(url)
     return data.json()
@@ -47,7 +48,7 @@ class Youtube:
     """
       get part of the videos in the database .. 
     """
-    url = 'https://youtube.googleapis.com/youtube/v3/playlistItems?part={}&playlistId={}&key={}&pageToken={}'
+    url = self.endpoint + 'playlistItems?part={}&playlistId={}&key={}&pageToken={}'
     url = url.format(part,playlist,self.youtube_key,page_token)
     data = requests.get(url)
     return data.json()
