@@ -75,24 +75,34 @@ class Youtube:
     return playlists_videos
 
   @staticmethod
-  def get_video_transcript(video_url):
+  def get_video_transcript(video_url,language):
     begin = 'https://www.youtube.com/watch?v='
     l = len(begin)
     if video_url.startswith(begin):
        video_url = video_url[l:]
-    trans = YouTubeTranscriptApi.get_transcript(video_url, languages=['en'])
-    data = []
-    for item in trans:
-        x = json.dumps(item)
-        y = json.loads(x)
-        data.append(y)
-    return data
-
-
+    trans = Youtube.get_trans(video_url,language)
+    if trans == '':
+          raise Exception("No transcript or translate Found .")
+    return trans    
 
   @staticmethod
-  def get_word_time_transcript(video_url):
-    data = Youtube.get_video_transcript(video_url)
+  def get_trans(video_url,language):
+        trans = ''
+        try:
+          trans = YouTubeTranscriptApi.get_transcript(video_url, languages= [language])
+        except Exception:
+            transcripts_langugages = YouTubeTranscriptApi.list_transcripts(video_url)
+            for lang in transcripts_langugages:
+              try:
+                trans = lang.translate(language).fetch()
+                break
+              except Exception:
+                pass
+        return trans
+      
+  @staticmethod
+  def get_word_time_transcript(video_url,language = 'ar'):
+    data = Youtube.get_video_transcript(video_url,language)
     newjson = {}
     newjson['transcripts'] = []
     for i in data:
@@ -105,5 +115,3 @@ class Youtube:
             newjson['transcripts'].append({'word': words[w], 'start_time ': newtime})
     return newjson
 
-
-  
