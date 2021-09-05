@@ -69,12 +69,7 @@ class Youtube:
         if 'nextPageToken' in d:
           ok = True
           page_token = d['nextPageToken']
-        
         small_data['videos'].extend(d['items'])
-        
-        
-        if ok == False:
-              break
       playlists_videos.append(small_data)
     
     return playlists_videos
