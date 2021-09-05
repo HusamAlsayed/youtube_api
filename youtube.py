@@ -31,18 +31,15 @@ class Youtube:
     """
     play_lists = []
     page_token = ''
-    while True:
+    ok = True
+    while ok == True:
       ok = False
       d = self.get_channel_playlists('snippet',channel_id,page_token)
       if 'nextPageToken' in  d:
         ok = True
         page_token = d['nextPageToken']
-      for l in d['items']:
-        play_lists.append(l)
-
-      if ok == False:
-        break
-
+      play_lists.extend(d['items'])
+    
     return play_lists
 
 
@@ -65,19 +62,19 @@ class Youtube:
       small_data = {}
       small_data['playlist_id'] = playlist['id']
       small_data['videos'] = []
-      while True:
+      ok = True
+      while ok == True:
         ok = False
         d = self.get_playlist_videos('snippet',playlist['id'],page_token)
         if 'nextPageToken' in d:
           ok = True
           page_token = d['nextPageToken']
         
-        for l in d['items']:
-          small_data['videos'].append(l)
+        small_data['videos'].extend(d['items'])
         
         
         if ok == False:
-          break
+              break
       playlists_videos.append(small_data)
     
     return playlists_videos
